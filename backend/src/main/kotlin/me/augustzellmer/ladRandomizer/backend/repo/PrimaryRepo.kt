@@ -1,18 +1,18 @@
 package me.augustzellmer.ladRandomizer.backend.repo
 
-import me.augustzellmer.ladRandomizer.backend.Shape
+import me.augustzellmer.ladRandomizer.backend.objects.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
-import java.lang.IllegalArgumentException
 
-open class Repo(@Autowired val db: JdbcTemplate){
+open class PrimaryRepo(@Autowired val db: JdbcTemplate){
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Throws(DuplicateRoomIdException::class, DuplicateUserIdException::class)
-    open fun addUser(roomId: String, userId: String){
+    open fun createRoom(roomId: String, userId: String){
         if(roomIdExists(roomId)){
             throw DuplicateRoomIdException()
         }
@@ -23,7 +23,19 @@ open class Repo(@Autowired val db: JdbcTemplate){
         db.update(sql, roomId, userId)
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Throws(RoomIdNotFoundException::class, DuplicateUserIdException::class)
+    open fun addUser(roomId: String, userId: String){
+        if(!roomIdExists(roomId)){
+            throw RoomIdNotFoundException()
+        }
+        if(userIdExists(userId)){
+            throw DuplicateUserIdException()
+        }
+        val sql = "INSERT INTO users (roomId, userId, polygon, color) VALUES (?, ?, NULL, NULL);"
+        db.update(sql, roomId, userId)
+    }
+
     @Throws(UserIdNotFoundException::class)
     open fun removeUser(userId: String){
         if(!userIdExists(userId)){
@@ -38,7 +50,7 @@ open class Repo(@Autowired val db: JdbcTemplate){
         return db.queryForObject(sql, arrayOf(roomId), Integer::class.java).toInt()
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Throws(UserIdNotFoundException::class)
     open fun setShapeOnUser(userId: String, shape: Shape){
         if(!userIdExists(userId)){
@@ -48,7 +60,7 @@ open class Repo(@Autowired val db: JdbcTemplate){
         db.update(sql, shape.polygon, shape.color, userId);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     @Throws(UserIdNotFoundException::class)
     open fun getShape(userId: String): Shape?{
         if(!userIdExists(userId)){
@@ -66,7 +78,7 @@ open class Repo(@Autowired val db: JdbcTemplate){
         val sql = "SELECT COUNT(*) FROM users WHERE roomId=?;"
         try {
             db.queryForObject(sql, arrayOf(roomId), Integer::class.java)
-        }catch(e: EmptyResultDataAccessException){
+        }catch (e: EmptyResultDataAccessException){
             return false
         }
         return true
@@ -76,15 +88,9 @@ open class Repo(@Autowired val db: JdbcTemplate){
         val sql = "SELECT COUNT(*) FROM users WHERE userId=?;"
         try {
             db.queryForObject(sql, arrayOf(userId), Integer::class.java)
-        }catch(e: EmptyResultDataAccessException){
+        }catch (e: EmptyResultDataAccessException){
             return false
         }
         return true
     }
 }
-
-open class DuplicateIdException() : IllegalArgumentException()
-class DuplicateRoomIdException() : DuplicateIdException()
-class DuplicateUserIdException() : DuplicateIdException()
-open class IdNotFoundException() : IllegalArgumentException()
-class UserIdNotFoundException(): IdNotFoundException()
