@@ -3,13 +3,12 @@ package me.augustzellmer.ladRandomizer.backend.service
 import me.augustzellmer.ladRandomizer.backend.objects.DuplicateRoomIdException
 import me.augustzellmer.ladRandomizer.backend.objects.DuplicateUserIdException
 import me.augustzellmer.ladRandomizer.backend.objects.RoomIdNotFoundException
-import me.augustzellmer.ladRandomizer.backend.objects.UserInRoom
-import me.augustzellmer.ladRandomizer.backend.repo.PrimaryRepo
+import me.augustzellmer.ladRandomizer.backend.repo.UserRepo
 import org.apache.juli.logging.LogFactory
 import org.apache.commons.lang3.RandomStringUtils
 import org.springframework.beans.factory.annotation.Autowired
 
-class PrimaryService(@Autowired val repo: PrimaryRepo) {
+class PrimaryService(@Autowired val repo: UserRepo) {
 
     val logger = LogFactory.getLog(PrimaryService::class.java);
 
