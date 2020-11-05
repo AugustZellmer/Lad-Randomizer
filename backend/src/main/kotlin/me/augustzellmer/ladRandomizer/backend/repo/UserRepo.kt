@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 
+@Repository
 open class UserRepo(@Autowired val db: JdbcTemplate, @Autowired val roomRepo: RoomRepo){
 
     fun getUser(userId: String): User?{
@@ -16,6 +18,19 @@ open class UserRepo(@Autowired val db: JdbcTemplate, @Autowired val roomRepo: Ro
             db.queryForObject(sql, arrayOf(userId), BeanPropertyRowMapper(User::class.java));
         }catch(e: EmptyResultDataAccessException){
             null
+        };
+    }
+
+    @Throws(RoomIdNotFoundException::class)
+    fun getUsersInRoom(roomId: String): Set<User>{
+        if(!roomIdExists(roomId)){
+            throw RoomIdNotFoundException()
+        }
+        val sql = "SELECT * FROM users WHERE roomId=?;"
+        return try {
+            db.query(sql, arrayOf(roomId), BeanPropertyRowMapper(User::class.java)).toSet();
+        }catch(e: EmptyResultDataAccessException){
+            emptySet<User>()
         };
     }
 
@@ -54,6 +69,7 @@ open class UserRepo(@Autowired val db: JdbcTemplate, @Autowired val roomRepo: Ro
         db.update(sql, userId)
     }
 
+    // TODO is this needed?
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Throws(RoomIdNotFoundException::class)
     open fun numUsersInRoom(roomId: String): Int {

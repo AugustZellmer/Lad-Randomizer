@@ -1,3 +1,3 @@
 package me.augustzellmer.ladRandomizer.backend.objects
 
-data class Room(val roomId: String)
+data class Room(var roomId: String)

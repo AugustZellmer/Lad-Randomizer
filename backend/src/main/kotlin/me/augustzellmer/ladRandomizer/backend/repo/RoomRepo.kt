@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
+@Repository
 open class RoomRepo(@Autowired val db: JdbcTemplate){
 
     fun getRoom(roomId: String): Room?{
@@ -22,12 +24,12 @@ open class RoomRepo(@Autowired val db: JdbcTemplate){
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Throws(DuplicateRoomIdException::class)
-    open fun addRoom(roomId: String){
-        if(roomIdExists(roomId)){
+    open fun addRoom(room: Room){
+        if(roomIdExists(room.roomId)){
             throw DuplicateRoomIdException()
         }
         val sql = "INSERT INTO rooms (roomId) VALUES (?);"
-        db.update(sql, roomId)
+        db.update(sql, room.roomId)
     }
 
     @Throws(RoomIdNotFoundException::class)
