@@ -16,11 +16,12 @@ class RoomRepo(@Autowired val db: JdbcTemplate, @Autowired val userRepo: UserRep
 
     fun getRoom(roomId: String): Room?{
         val sql = "SELECT * FROM rooms WHERE roomId=?;"
-        return try {
-            db.queryForObject(sql, arrayOf(roomId), BeanPropertyRowMapper(Room::class.java));
+        val entity = try {
+            db.queryForObject(sql, arrayOf(roomId), BeanPropertyRowMapper(RoomEntity::class.java))!!;
         }catch(e: EmptyResultDataAccessException){
-            null
-        };
+            return null
+        }
+        return entity.toRoom();
     }
 
     @Throws(UserIdNotFoundException::class)
@@ -29,11 +30,12 @@ class RoomRepo(@Autowired val db: JdbcTemplate, @Autowired val userRepo: UserRep
             throw UserIdNotFoundException()
         }
         val sql = "SELECT * FROM rooms WHERE userId=?;"
-        return try {
-            db.queryForObject(sql, arrayOf(userId), BeanPropertyRowMapper(Room::class.java));
+        val entity = try {
+            db.queryForObject(sql, arrayOf(userId), BeanPropertyRowMapper(RoomEntity::class.java))!!;
         }catch(e: EmptyResultDataAccessException){
-            null
-        };
+            return null
+        }
+        return entity.toRoom();
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)

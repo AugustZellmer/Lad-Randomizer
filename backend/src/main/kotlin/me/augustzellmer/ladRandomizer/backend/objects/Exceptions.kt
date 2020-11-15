@@ -9,3 +9,4 @@ open class IdNotFoundException() : IllegalArgumentException()
 class RoomIdNotFoundException(): IdNotFoundException()
 class UserIdNotFoundException(): IdNotFoundException()
 class OrphanedUserException: IllegalStateException();
+class HalfShapeException: IllegalStateException();

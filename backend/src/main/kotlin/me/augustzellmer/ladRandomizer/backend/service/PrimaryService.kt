@@ -44,7 +44,7 @@ open class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val user
         do{
             createdWithoutIdCollision = true
             val userId = RandomStringUtils.randomAlphanumeric(10)
-            user = User(roomId, userId, null, null, Instant.now())
+            user = User(roomId, userId, null, Instant.now())
             try{
                 userRepo.addUser(user)
             }catch (e: DuplicateUserIdException){
@@ -86,8 +86,7 @@ open class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val user
                     createdWithoutIdCollision=false
                 }
             }while(!createdWithoutIdCollision)
-            user.polygon=shape.polygon
-            user.color=shape.color
+            user.shape = shape
             userRepo.updateUser(user)
             updateRoomLastMutatedAt(roomId)
         }
