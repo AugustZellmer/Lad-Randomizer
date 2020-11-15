@@ -64,7 +64,7 @@ open class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val user
         updateUserLastSeenAt(userId)
         cleanRoomOfStaleData(roomOfUser.roomId)
         if(userNeedsAnUpdate(roomOfUser, lastCheckedInAt)){
-            return createRoomPerspective(roomOfUser, user)
+            return createRoomPerspective(roomOfUser.roomId, user)
         }
         return null
     }
@@ -124,7 +124,19 @@ open class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val user
         return roomOfUser.lastMutatedAt.isAfter(lastCheckedInAt)
     }
 
-    private fun createRoomPerspective(roomOfUser: Room, user: User): RoomPerspective? {
-        
+    @Throws(RoomIdNotFoundException::class)
+    private fun createRoomPerspective(roomId: String, you: User): RoomPerspective {
+        var yourShape: Shape? = null;
+        val otherShapes = mutableSetOf<Shape?>()
+        val users = userRepo.getUsersInRoom(roomId)
+        for(user in users){
+            if(user == you){
+                yourShape = user.shape
+            }
+            else{
+                otherShapes.add(user.shape)
+            }
+        }
+        return RoomPerspective(yourShape, otherShapes);
     }
 }
