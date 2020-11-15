@@ -1,4 +1,4 @@
-package me.augustzellmer.ladRandomizer.backend
+package me.augustzellmer.ladRandomizer.backend.objects
 
 data class Shape(val polygon: Polygon, val color: Color);
 
