@@ -1,3 +1,5 @@
 package me.augustzellmer.ladRandomizer.backend.objects
 
-data class Room(var roomId: String)
+import java.time.Instant
+
+data class Room(var roomId: String, var lastMutatedAt: Instant)
