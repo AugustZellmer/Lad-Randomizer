@@ -1,6 +1,9 @@
 package me.augustzellmer.ladRandomizer.backend.repo
 
-import me.augustzellmer.ladRandomizer.backend.objects.*
+import me.augustzellmer.ladRandomizer.backend.objects.DuplicateRoomIdException
+import me.augustzellmer.ladRandomizer.backend.objects.Room
+import me.augustzellmer.ladRandomizer.backend.objects.RoomIdNotFoundException
+import me.augustzellmer.ladRandomizer.backend.objects.UserIdNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Lazy
 import org.springframework.dao.EmptyResultDataAccessException
@@ -22,6 +25,16 @@ class RoomRepo(@Autowired val db: JdbcTemplate, @Autowired val userRepo: UserRep
             return null
         }
         return entity.toRoom();
+    }
+
+    fun getRooms(): Set<Room>{
+        val sql = "SELECT * FROM rooms;"
+        val entities = try {
+            db.query(sql, BeanPropertyRowMapper(RoomEntity::class.java));
+        }catch(e: EmptyResultDataAccessException){
+            emptySet<RoomEntity>()
+        }
+        return entities.map { it.toRoom() }.toSet()
     }
 
     @Throws(UserIdNotFoundException::class)

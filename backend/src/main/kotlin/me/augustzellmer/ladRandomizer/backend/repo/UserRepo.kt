@@ -1,6 +1,9 @@
 package me.augustzellmer.ladRandomizer.backend.repo
 
-import me.augustzellmer.ladRandomizer.backend.objects.*
+import me.augustzellmer.ladRandomizer.backend.objects.DuplicateUserIdException
+import me.augustzellmer.ladRandomizer.backend.objects.RoomIdNotFoundException
+import me.augustzellmer.ladRandomizer.backend.objects.User
+import me.augustzellmer.ladRandomizer.backend.objects.UserIdNotFoundException
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.BeanPropertyRowMapper

@@ -6,13 +6,19 @@ import me.augustzellmer.ladRandomizer.backend.repo.UserRepo
 import org.apache.commons.lang3.RandomStringUtils
 import org.apache.juli.logging.LogFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.TransactionDefinition
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionTemplate
 import java.time.Instant
 import java.time.temporal.ChronoUnit.SECONDS
 import kotlin.random.Random
 
-open class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val userRepo: UserRepo) {
+
+@Service
+class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val userRepo: UserRepo, @Autowired val txManager: PlatformTransactionManager) {
 
     val logger = LogFactory.getLog(PrimaryService::class.java);
 
@@ -37,7 +43,7 @@ open class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val user
 
     @Throws(RoomIdNotFoundException::class)
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    open fun addUserToRoom(roomId: String): User{
+    fun addUserToRoom(roomId: String): User{
         logger.trace("Adding user to room.");
         var createdWithoutIdCollision: Boolean
         var user: User
@@ -58,7 +64,7 @@ open class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val user
 
     @Throws(UserIdNotFoundException::class, OrphanedUserException::class)
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    open fun heartbeat(userId: String, lastCheckedInAt: Instant): RoomPerspective?{
+    fun heartbeat(userId: String, lastCheckedInAt: Instant): RoomPerspective?{
         val roomOfUser = roomRepo.getRoomContainingUser(userId) ?: throw OrphanedUserException()
         val user = userRepo.getUser(userId) ?: throw UserIdNotFoundException()
         updateUserLastSeenAt(userId)
@@ -71,7 +77,7 @@ open class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val user
 
     @Throws(RoomIdNotFoundException::class)
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    open fun distributeRandomShapes(roomId: String){
+    fun distributeRandomShapes(roomId: String){
         val users = userRepo.getUsersInRoom(roomId);
         val shapes = mutableListOf<Shape>();
         for(user in users){
@@ -92,31 +98,56 @@ open class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val user
         }
     }
 
+    @Throws(RoomIdNotFoundException::class, UserIdNotFoundException::class)
+    fun doesRoomContainUser(roomId: String, userId: String): Boolean{
+        roomRepo.getRoom(roomId) ?: throw RoomIdNotFoundException()
+        val user = userRepo.getUser(userId) ?: throw UserIdNotFoundException()
+        return user.roomId == roomId
+    }
+
+    fun deleteStaleData(){
+        val rooms = roomRepo.getRooms();
+        for(room in rooms){
+            cleanRoomOfStaleData(room.roomId)
+        }
+    }
+
     @Throws(RoomIdNotFoundException::class)
     private fun updateRoomLastMutatedAt(roomId: String){
-        val room = roomRepo.getRoom(roomId) ?: throw RoomIdNotFoundException()
-        room.lastMutatedAt = Instant.now()
-        roomRepo.updateRoom(room)
+        val txTemplate = TransactionTemplate(txManager)
+        txTemplate.isolationLevel = TransactionDefinition.ISOLATION_SERIALIZABLE
+        txTemplate.execute {
+            val room = roomRepo.getRoom(roomId) ?: throw RoomIdNotFoundException()
+            room.lastMutatedAt = Instant.now()
+            roomRepo.updateRoom(room)
+        }
     }
 
     @Throws(UserIdNotFoundException::class)
     private fun updateUserLastSeenAt(userId: String){
-        val user = userRepo.getUser(userId) ?: throw UserIdNotFoundException()
-        user.lastSeenAt = Instant.now()
-        userRepo.updateUser(user)
+        val txTemplate = TransactionTemplate(txManager)
+        txTemplate.isolationLevel = TransactionDefinition.ISOLATION_SERIALIZABLE
+        txTemplate.execute {
+            val user = userRepo.getUser(userId) ?: throw UserIdNotFoundException()
+            user.lastSeenAt = Instant.now()
+            userRepo.updateUser(user)
+        }
     }
 
     @Throws(RoomIdNotFoundException::class)
     private fun cleanRoomOfStaleData(roomId: String){
         val users = userRepo.getUsersInRoom(roomId)
         for(user in users){
-            if(user.lastSeenAt.isBefore(Instant.now().minus(3, SECONDS))){
+            if(user.lastSeenAt.isBefore(Instant.now().minus(30, SECONDS))){
                 userRepo.removeUser(user.userId)
             }
         }
         val currentUsers = userRepo.getUsersInRoom(roomId)
         if(currentUsers.isEmpty()){
             roomRepo.removeRoom(roomId);
+        }
+        else {
+            updateRoomLastMutatedAt(roomId)
         }
     }
 
