@@ -1,1 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
+@import '~normalize.css';
+
+:root{
+  --lad-red: #FA483C;
+  --lad-orange: #FA7B30;
+  --lad-yellow: #FAD401;
+  --lad-green: #138F30;
+  --lad-blue: #3253D6;
+  --lad-purple: #7F32C7;
+  --lad-pink: #D162CC;
+  --lad-lavender: #dfefff;
+  --lad-light-lavender: #F7FBFF;
+}
+
+body{
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+}

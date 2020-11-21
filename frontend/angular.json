@@ -119,6 +119,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "LadRandomizer"
+    }
+  },
+  "defaultProject": "LadRandomizer",
+  "cli": {
+    "analytics": "73467c12-db93-41b0-9375-9d89252da9aa"
+  }
 }
