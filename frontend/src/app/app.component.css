@@ -1,7 +1,13 @@
+:host{
+  min-height: 100vh;
+  position: relative;
+  display: block;
+}
+
 #background{
   width: 100%;
   height: 100%;
-  position: relative; /* this makes the background work correctly */
+  position: absolute;
   overflow: hidden;
 }
 

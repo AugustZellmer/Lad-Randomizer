@@ -1,0 +1,111 @@
+#contentWrapper{
+  margin: auto;
+  width: fit-content;
+  position: relative;
+  top: 50vh;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: row;
+  font-size: 24px;
+  color: var(--lad-white);
+}
+
+#create{
+  background: var(--lad-red);
+  transform: rotate(-5deg) translateY(-10px);
+  cursor: pointer;
+  box-shadow: var(--z-12);
+}
+
+#create:active{
+  box-shadow: var(--z-6);
+}
+
+#join{
+  background: var(--lad-blue);
+  transform: rotate(5deg) translateY(10px);
+  box-shadow: var(--z-12);
+}
+
+.bigButton{
+  width: 200px;
+  height: 200px;
+  text-align: center;
+  margin: 30px;
+  border-radius: 12px;
+}
+
+.bigButton>span{
+  display: inline-block;
+  margin-top: 50%;
+  transform: translateY(-50%);
+}
+
+#join:not(:hover)>#inputContainer{
+  opacity: 0;
+}
+
+#inputContainer{
+  font-size: 20px;
+  width: 80%;
+  margin: auto;
+  border: 1px solid var(--lad-white);
+  border-radius: 9px;
+  display: flex;
+  flex-direction: row;
+  height: fit-content;
+  transition: opacity .1s;
+}
+
+#inputContainer>input{
+  flex-shrink: 1;
+  min-width: 1px; /* allows flex-shrink to work */
+  background: transparent;
+  border: none;
+  height: 100%;
+  color: var(--lad-white);
+  padding-left: 5px;
+}
+
+#inputContainer>input::placeholder {
+  color: var(--lad-white);
+}
+
+#inputContainer>button{
+  border: 0;
+  border-left: 1px solid var(--lad-white);
+  border-radius: 0 9px 9px 0;
+  padding: 0;
+  display: block;
+  background: transparent;
+  cursor: pointer;
+}
+
+#inputContainer>button:active{
+  box-shadow: var(--z-4-inset);
+}
+
+#inputContainer>button>i{
+  height: 32px;
+  width: 32px;
+  line-height: 30px;
+  color: var(--lad-white);
+}
+
+@media only screen and (max-width: 600px) {
+  #contentWrapper{
+    top: 0;
+    transform: none;
+    flex-direction: column;
+  }
+
+  #create{
+    background: var(--lad-red);
+    transform: rotate(-5deg);
+  }
+
+  #join{
+    background: var(--lad-blue);
+    transform: rotate(5deg);
+  }
+}
