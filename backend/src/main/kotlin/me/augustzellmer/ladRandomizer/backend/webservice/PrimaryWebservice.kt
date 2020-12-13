@@ -9,21 +9,22 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
 import java.time.Instant
 
-@RestController
+@RestController()
+@RequestMapping("/api")
 class PrimaryWebservice(@Autowired val service: PrimaryService){
 
-    @PutMapping("/room")
+    @PostMapping("/room")
     fun createRoom(): Room {
         return service.createRoom()
     }
 
-    @PutMapping("/room/{roomId}/user")
+    @PostMapping("/room/{roomId}/user")
     fun addUserToRoom(@PathVariable roomId: String): User {
         return service.addUserToRoom(roomId)
     }
 
     @PostMapping("/room/{roomId}/randomize")
-    fun distributeRandomShapes(@PathVariable roomId: String): Unit{
+    fun distributeRandomShapes(@PathVariable roomId: String){
         service.distributeRandomShapes(roomId)
     }
 
@@ -42,7 +43,7 @@ class PrimaryWebservice(@Autowired val service: PrimaryService){
     /*
     What is the correct HTTP Method to use here? Who knows!
      */
-    @DeleteMapping("/deleteStaleData")
+    @PostMapping("/deleteStaleData")
     fun deleteStaleData(): Unit{
         service.deleteStaleData();
     }

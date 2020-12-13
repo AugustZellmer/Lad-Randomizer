@@ -20,7 +20,8 @@ import kotlin.random.Random
 @Service
 class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val userRepo: UserRepo, @Autowired val txManager: PlatformTransactionManager) {
 
-    val logger = LogFactory.getLog(PrimaryService::class.java);
+    private val SEED = 123;
+    private val logger = LogFactory.getLog(PrimaryService::class.java);
 
     @Throws(DuplicateRoomIdException::class)
     fun createRoom(): Room {
@@ -80,13 +81,14 @@ class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val userRepo:
     fun distributeRandomShapes(roomId: String){
         val users = userRepo.getUsersInRoom(roomId);
         val shapes = mutableListOf<Shape>();
+        val random = Random(SEED);
         for(user in users){
             var createdWithoutIdCollision: Boolean
             var shape: Shape;
             do{
                 createdWithoutIdCollision=true
-                val polygon = Polygon.values()[Random.nextInt(Polygon.values().size)]
-                val color = Color.values()[Random.nextInt(Color.values().size)]
+                val polygon = Polygon.values()[random.nextInt(Polygon.values().size)]
+                val color = Color.values()[random.nextInt(Color.values().size)]
                 shape = Shape(polygon, color)
                 if(shapes.contains(shape)){
                     createdWithoutIdCollision=false
@@ -118,7 +120,7 @@ class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val userRepo:
         txTemplate.isolationLevel = TransactionDefinition.ISOLATION_SERIALIZABLE
         txTemplate.execute {
             val room = roomRepo.getRoom(roomId) ?: throw RoomIdNotFoundException()
-            room.lastMutatedAt = Instant.now()
+            room.lastAccessedAt = Instant.now()
             roomRepo.updateRoom(room)
         }
     }
@@ -152,7 +154,7 @@ class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val userRepo:
     }
 
     private fun userNeedsAnUpdate(roomOfUser: Room, lastCheckedInAt: Instant): Boolean {
-        return roomOfUser.lastMutatedAt.isAfter(lastCheckedInAt)
+        return roomOfUser.lastAccessedAt.isAfter(lastCheckedInAt)
     }
 
     @Throws(RoomIdNotFoundException::class)

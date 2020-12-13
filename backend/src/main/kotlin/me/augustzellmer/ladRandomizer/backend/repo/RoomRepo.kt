@@ -12,13 +12,13 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Isolation
 import org.springframework.transaction.annotation.Transactional
+import java.sql.Timestamp
 
-@Lazy
 @Repository
-class RoomRepo(@Autowired val db: JdbcTemplate, @Autowired val userRepo: UserRepo){
+class RoomRepo(@Autowired val db: JdbcTemplate, @Lazy @Autowired val userRepo: UserRepo){
 
     fun getRoom(roomId: String): Room?{
-        val sql = "SELECT * FROM rooms WHERE roomId=?;"
+        val sql = "SELECT * FROM ladrandomizer.rooms WHERE roomId=?;"
         val entity = try {
             db.queryForObject(sql, arrayOf(roomId), BeanPropertyRowMapper(RoomEntity::class.java))!!;
         }catch(e: EmptyResultDataAccessException){
@@ -28,7 +28,7 @@ class RoomRepo(@Autowired val db: JdbcTemplate, @Autowired val userRepo: UserRep
     }
 
     fun getRooms(): Set<Room>{
-        val sql = "SELECT * FROM rooms;"
+        val sql = "SELECT * FROM ladrandomizer.rooms;"
         val entities = try {
             db.query(sql, BeanPropertyRowMapper(RoomEntity::class.java));
         }catch(e: EmptyResultDataAccessException){
@@ -42,7 +42,7 @@ class RoomRepo(@Autowired val db: JdbcTemplate, @Autowired val userRepo: UserRep
         if(!userIdExists(userId)){
             throw UserIdNotFoundException()
         }
-        val sql = "SELECT * FROM rooms WHERE userId=?;"
+        val sql = "SELECT * FROM ladrandomizer.rooms WHERE userId=?;"
         val entity = try {
             db.queryForObject(sql, arrayOf(userId), BeanPropertyRowMapper(RoomEntity::class.java))!!;
         }catch(e: EmptyResultDataAccessException){
@@ -57,8 +57,8 @@ class RoomRepo(@Autowired val db: JdbcTemplate, @Autowired val userRepo: UserRep
         if(roomIdExists(room.roomId)){
             throw DuplicateRoomIdException()
         }
-        val sql = "INSERT INTO rooms (roomId, lastMutatedAt) VALUES (?, ?);"
-        db.update(sql, room.roomId, room.lastMutatedAt)
+        val sql = "INSERT INTO ladrandomizer.rooms (roomId, lastAccessedAt) VALUES (?, ?);"
+        db.update(sql, room.roomId, Timestamp.from(room.lastAccessedAt))
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
@@ -67,8 +67,8 @@ class RoomRepo(@Autowired val db: JdbcTemplate, @Autowired val userRepo: UserRep
         if(roomIdExists(room.roomId)){
             throw RoomIdNotFoundException()
         }
-        val sql = "UPDATE rooms SET roomId=?, lastMutatedAt=?) WHERE roomId=?"
-        db.update(sql, room.roomId, room.lastMutatedAt, room.roomId)
+        val sql = "UPDATE ladrandomizer.rooms SET roomId=?, lastAccessedAt=?) WHERE roomId=?"
+        db.update(sql, room.roomId, Timestamp.from(room.lastAccessedAt), room.roomId)
     }
 
     @Throws(RoomIdNotFoundException::class)
@@ -76,18 +76,14 @@ class RoomRepo(@Autowired val db: JdbcTemplate, @Autowired val userRepo: UserRep
         if(!roomIdExists(roomId)){
             throw RoomIdNotFoundException()
         }
-        val sql = "DELETE FROM rooms WHERE roomId=?;"
+        val sql = "DELETE FROM ladrandomizer.rooms WHERE roomId=?;"
         db.update(sql, roomId)
     }
 
     private fun roomIdExists(roomId: String): Boolean{
-        val sql = "SELECT COUNT(*) FROM rooms WHERE roomId=?;"
-        try {
-            db.queryForObject(sql, arrayOf(roomId), Integer::class.java)
-        }catch (e: EmptyResultDataAccessException){
-            return false
-        }
-        return true
+        val sql = "SELECT COUNT(*) FROM ladrandomizer.rooms WHERE roomId=?;"
+        val count = db.queryForObject(sql, arrayOf(roomId), Integer::class.java)
+        return count>0;
     }
 
     private fun userIdExists(userId: String): Boolean{

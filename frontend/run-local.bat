@@ -1,0 +1,1 @@
+ng serve --proxy-config local-proxy.conf.json

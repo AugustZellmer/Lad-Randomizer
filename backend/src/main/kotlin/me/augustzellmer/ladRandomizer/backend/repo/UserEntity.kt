@@ -1,13 +1,22 @@
 package me.augustzellmer.ladRandomizer.backend.repo
 
 import me.augustzellmer.ladRandomizer.backend.objects.*
-import java.time.Instant
+import java.sql.Timestamp
+import javax.persistence.Entity
+import javax.persistence.Id
 
-data class UserEntity(var roomId: String, var userId: String, var polygon: Polygon?, var color: Color?, var lastSeenAt: Instant){
+@Entity
+class UserEntity{
+
+    @Id
+    lateinit var roomId: String
+    lateinit var userId: String
+    var polygon: Polygon? = null
+    var color: Color? = null
+    lateinit var lastSeenAt: Timestamp
 
     fun toUser(): User {
         val shape = if(polygon != null && color != null) Shape(polygon!!, color!!) else throw HalfShapeException();
-        return User(roomId, userId, shape, lastSeenAt)
+        return User(roomId, userId, shape, lastSeenAt.toInstant())
     }
 }
-
