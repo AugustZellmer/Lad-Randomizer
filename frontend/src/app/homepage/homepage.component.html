@@ -2,11 +2,11 @@
   <div id="create" class="bigButton" (click)="createRoom()">
     <span>Create Room</span>
   </div>
-  <div id="join" class="bigButton">
+  <div id="join" class="bigButton" (mouseleave)="unHover()">
     <span>Join Room</span>
     <div id="inputContainer">
-      <input type="text" placeholder="Room ID">
-      <button id="showHide">
+      <input type="text" placeholder="Room ID" [class.error]="inputError" [(ngModel)]="roomInput">
+      <button id="showHide" (click)="joinRoom()">
         <i class="material-icons-round">navigate_next</i>
       </button>
     </div>

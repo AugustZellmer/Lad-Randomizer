@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Room} from "./businessObjects/Room";
+import {Room} from './businessObjects/Room';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -10,7 +10,7 @@ export class BackendService {
 
   constructor(private http: HttpClient) { }
 
-  createRoom():Observable<Room>{
-    return this.http.post<Room>("/api/room", null);
+  createRoom(): Observable<Room>{
+    return this.http.post<Room>('/api/room', null);
   }
 }

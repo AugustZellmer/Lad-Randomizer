@@ -30,7 +30,7 @@ class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val userRepo:
         var room: Room
         do {
             createdWithoutIdCollision = true
-            val roomId = RandomStringUtils.randomAlphanumeric(7)
+            val roomId = RandomStringUtils.randomAlphanumeric(7).toUpperCase()
             room = Room(roomId, Instant.now());
             try {
                 roomRepo.addRoom(room)
@@ -50,7 +50,7 @@ class PrimaryService(@Autowired val roomRepo: RoomRepo, @Autowired val userRepo:
         var user: User
         do{
             createdWithoutIdCollision = true
-            val userId = RandomStringUtils.randomAlphanumeric(10)
+            val userId = RandomStringUtils.randomAlphanumeric(10).toUpperCase()
             user = User(roomId, userId, null, Instant.now())
             try{
                 userRepo.addUser(user)

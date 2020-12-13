@@ -15,8 +15,8 @@
   content: "";
   position: absolute;
   width: 200%;
-  height: 200%;
-  top: -50%;
+  height: 500%;
+  top: -250%;
   left: -50%;
   z-index: -1;
   background-image: radial-gradient(var(--lad-lavender) 20%, var(--lad-light-lavender) 20%);
