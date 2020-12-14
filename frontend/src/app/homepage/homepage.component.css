@@ -96,7 +96,15 @@
 }
 
 #inputContainer>input.error{
-  background: var(--lad-red);
+  animation-name: blink;
+  animation-duration: .25s;
+  animation-iteration-count: 2;
+}
+
+@keyframes blink {
+  0%   {background-color: var(--lad-blue);}
+  50%  {background-color: var(--lad-white);}
+  100% {background-color: var(--lad-blue);}
 }
 
 @media only screen and (max-width: 600px) {

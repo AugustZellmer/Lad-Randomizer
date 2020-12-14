@@ -31,14 +31,11 @@ export class HomepageComponent implements OnInit {
   joinRoom(): void{
     if (this.roomInput === undefined || this.roomInput === null || this.roomInput === ''){
       this.inputError = true;
+      setTimeout(() => this.inputError = false, 500); // the time it takes for the animation to play
       return;
     }
     console.log('joining room [' + this.roomInput + ']');
     this.currentRoom.set(this.roomInput);
     this.router.navigate(['/room']);
-  }
-
-  unHover(): void{
-    setTimeout(() => this.inputError = false, 100); // the time it takes for the fade animation to play
   }
 }

@@ -23,4 +23,17 @@
   background-position: 0 0;
   background-size: 100px 100px;
   transform: rotate(20deg);
+  animation-name: slide;
+  animation-iteration-count: infinite;
+  animation-duration: 5s;
+  animation-timing-function: linear;
+}
+
+@keyframes slide {
+  from {
+    transform: translateX(0px) rotate(20deg) translateY(0px);
+  }
+  to {
+    transform: translateX(106.418px) rotate(20deg)  translateY(36.397px);
+  }
 }
