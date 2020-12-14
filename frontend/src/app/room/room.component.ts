@@ -20,6 +20,11 @@ export class RoomComponent implements OnInit {
     if (this.room === null){
       this.nullRoomErr = true;
     }
+    this.backend.createUser(this.room).subscribe(
+      user => {
+        console.log(`created user [${user.userId}]`);
+      }
+    );
   }
 
 }
