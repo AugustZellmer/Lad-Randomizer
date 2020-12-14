@@ -9,6 +9,7 @@
   height: 100%;
   position: absolute;
   overflow: hidden;
+  z-index: -1;
 }
 
 #background::before {

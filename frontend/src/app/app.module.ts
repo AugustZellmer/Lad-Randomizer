@@ -8,12 +8,14 @@ import { HomepageComponent } from './homepage/homepage.component';
 import { RoomComponent } from './room/room.component';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { NullRoomComponent } from './room/null-room/null-room.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomepageComponent,
-    RoomComponent
+    RoomComponent,
+    NullRoomComponent
   ],
   imports: [
     BrowserModule,

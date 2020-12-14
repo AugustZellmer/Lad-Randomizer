@@ -26,3 +26,38 @@ body{
   margin: 0;
   min-height: 100vh;
 }
+
+app-null-room{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+  width: fit-content;
+  position: relative;
+  top: 50vh;
+  transform: translateY(-50%);
+}
+
+#errMsg{
+  color: var(--lad-purple);
+  font-size: 35px;
+  text-align: center;
+}
+
+#errBackButton{
+  display: inline-block;
+  background: var(--lad-blue);
+  color: var(--lad-white);
+  cursor: pointer;
+  border-radius: 9px;
+  font-size: 24px;
+  text-decoration: none;
+  padding: 6px 10px;
+}
+
+#errBackButton>i{
+  vertical-align: bottom;
+  position: relative;
+  left: -9px;
+
+}
