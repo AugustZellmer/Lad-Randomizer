@@ -64,10 +64,10 @@ class RoomRepo(@Autowired val db: JdbcTemplate, @Lazy @Autowired val userRepo: U
     @Transactional(isolation = Isolation.SERIALIZABLE)
     @Throws(RoomIdNotFoundException::class)
     open fun updateRoom(room: Room){
-        if(roomIdExists(room.roomId)){
+        if(!roomIdExists(room.roomId)){
             throw RoomIdNotFoundException()
         }
-        val sql = "UPDATE ladrandomizer.rooms SET roomId=?, lastAccessedAt=?) WHERE roomId=?"
+        val sql = "UPDATE ladrandomizer.rooms SET roomId=?, lastAccessedAt=? WHERE roomId=?"
         db.update(sql, room.roomId, Timestamp.from(room.lastAccessedAt), room.roomId)
     }
 

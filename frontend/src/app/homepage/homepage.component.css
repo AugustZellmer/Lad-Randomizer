@@ -98,7 +98,7 @@
 
 #inputContainer>input.error{
   animation-name: blink;
-  animation-duration: .25s;
+  animation-duration: .15s;
   animation-iteration-count: 2;
 }
 

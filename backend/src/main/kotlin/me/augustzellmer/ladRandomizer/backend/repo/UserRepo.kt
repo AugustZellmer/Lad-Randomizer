@@ -62,7 +62,7 @@ open class UserRepo(@Autowired val db: JdbcTemplate, @Autowired val roomRepo: Ro
         if(!roomIdExists(user.roomId)){
             throw RoomIdNotFoundException()
         }
-        val sql = "UPDATE ladrandomizer.users SET roomId=?, userId=?, polygon=?, color=?, lastSeenAt=?) WHERE userId=?"
+        val sql = "UPDATE ladrandomizer.users SET roomId=?, userId=?, polygon=?, color=?, lastSeenAt=? WHERE userId=?"
         db.update(sql, user.roomId, user.userId, user.shape?.polygon, user.shape?.color, Timestamp.from(user.lastSeenAt), user.userId)
     }
 
