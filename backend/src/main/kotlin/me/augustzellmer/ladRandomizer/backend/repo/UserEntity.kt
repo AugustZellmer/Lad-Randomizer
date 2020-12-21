@@ -16,7 +16,13 @@ class UserEntity{
     lateinit var lastSeenAt: Timestamp
 
     fun toUser(): User {
-        val shape = if(polygon != null && color != null) Shape(polygon!!, color!!) else throw HalfShapeException();
+        var shape: Shape? = if(this.polygon != null && this.color != null){
+            Shape(this.polygon!!, this.color!!)
+        }
+        else if(this.polygon == null && this.color == null){
+            null
+        }
+        else throw HalfShapeException();
         return User(roomId, userId, shape, lastSeenAt.toInstant())
     }
 }

@@ -42,7 +42,7 @@ class RoomRepo(@Autowired val db: JdbcTemplate, @Lazy @Autowired val userRepo: U
         if(!userIdExists(userId)){
             throw UserIdNotFoundException()
         }
-        val sql = "SELECT * FROM ladrandomizer.rooms WHERE userId=?;"
+        val sql = "SELECT r.roomId, r.lastAccessedAt FROM ladrandomizer.rooms r JOIN ladrandomizer.users u ON r.roomId=u.roomId WHERE userId=?;"
         val entity = try {
             db.queryForObject(sql, arrayOf(userId), BeanPropertyRowMapper(RoomEntity::class.java))!!;
         }catch(e: EmptyResultDataAccessException){
