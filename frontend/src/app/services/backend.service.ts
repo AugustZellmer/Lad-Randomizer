@@ -20,9 +20,9 @@ export class BackendService {
     return this.http.post<User>(`/api/room/${roomId}/user`, null);
   }
 
-  heartbeat(roomId: string, userId: string, lastUpdatedAt: Date): Observable<RoomPerspective>{
+  heartbeat(roomId: string, userId: string, lastUpdatedAt: Date): Observable<RoomPerspective | null>{
     // the next line is not best practice, but best practice doesn't work for me.
-    return this.http.post<RoomPerspective>(
+    return this.http.post<RoomPerspective | null>(
       `/api/room/${roomId}/user/${userId}/heartbeat?lastUpdatedAt=${lastUpdatedAt.toISOString()}`,
       null);
   }

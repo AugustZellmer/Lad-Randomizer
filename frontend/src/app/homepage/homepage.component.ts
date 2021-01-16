@@ -21,7 +21,7 @@ export class HomepageComponent implements OnInit {
   createRoom(): void{
     this.backend.createRoom().subscribe(
       room => {
-        console.log(`created room [${room.roomId}]`);
+        console.log(`created room [${JSON.stringify(room)}]`);
         this.currentRoom.set(room.roomId);
         this.router.navigate(['/room']);
       }

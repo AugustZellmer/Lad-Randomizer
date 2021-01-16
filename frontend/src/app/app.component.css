@@ -1,5 +1,5 @@
 :host{
-  min-height: 100vh;
+  height: 100%;
   position: relative;
   display: block;
 }
@@ -15,10 +15,10 @@
 #background::before {
   content: "";
   position: absolute;
-  width: 200%;
-  height: 500%;
-  top: -250%;
-  left: -50%;
+  width: 10000px; /* TODO make this work on larger monitors */
+  height: 10000px;
+  top: -5000px;
+  left: -5000px;
   z-index: -1;
   background-image: radial-gradient(var(--lad-lavender) 20%, var(--lad-light-lavender) 20%);
   background-position: 0 0;

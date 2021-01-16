@@ -1,8 +1,12 @@
+:host{
+  height: 100%;
+}
+
 #contentWrapper{
   margin: auto;
   width: fit-content;
   position: relative;
-  top: 50vh;
+  top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: row;
@@ -108,10 +112,9 @@
   100% {background-color: var(--lad-blue);}
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (orientation: portrait) {
+
   #contentWrapper{
-    top: 0;
-    transform: none;
     flex-direction: column;
   }
 

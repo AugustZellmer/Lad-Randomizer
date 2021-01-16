@@ -1,1 +1,6 @@
 <app-null-room *ngIf="nullRoomErr"></app-null-room>
+<div *ngIf="!nullRoomErr" id="content">
+  <div id="roomInfo">
+    <span>Users: {{this.otherShapes.length+1}}</span>
+  </div>
+</div>

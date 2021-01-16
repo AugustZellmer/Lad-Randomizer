@@ -22,9 +22,13 @@
   box-sizing: border-box;
 }
 
+html{
+  height: 100%;
+}
+
 body{
   margin: 0;
-  min-height: 100vh;
+  height: 100%;
 }
 
 app-null-room{
@@ -34,7 +38,7 @@ app-null-room{
   margin: auto;
   width: fit-content;
   position: relative;
-  top: 50vh;
+  top: 50%;
   transform: translateY(-50%);
 }
 

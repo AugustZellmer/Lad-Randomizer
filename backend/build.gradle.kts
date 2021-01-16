@@ -35,10 +35,6 @@ dependencies {
 	}
 }
 
-configurations.all {
-	exclude(group = "ch.qos.logback", module = "logback-classic")
-}
-
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
